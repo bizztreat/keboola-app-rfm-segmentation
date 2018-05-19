@@ -4,10 +4,9 @@
 This app compute the RFM segmentation of provided transactional data
 
 ## Configuration
-Application expect exactly one input CSV file with transactions data
+Input: Application expect exactly one input CSV file with transactions data
 
-Application first output CSV file will be used for results of segmentation
-When the option of computing business potential is selected the app expect the second output CSV file where this potential will be stored
+Output: Application use defaults buckets and therefore the results will be stored in file results.csv and when the option of computing business potential is selected also in bussiness_potential.csv
 
 ### Parameters
 

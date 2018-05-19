@@ -37,13 +37,6 @@ public class KeboolaRFMSegmentation {
         }
         String inputTable = config.getAsJsonObject("storage").getAsJsonObject("input").getAsJsonArray("tables").get(0).getAsJsonObject().getAsJsonPrimitive("destination").getAsString();
 
-        JsonArray outputs = config.getAsJsonObject("storage").getAsJsonObject("output").getAsJsonArray("tables");
-        if (outputs.get(0).getAsJsonObject().getAsJsonPrimitive("source") == null) {
-            System.err.println("Output file must be specified");
-            System.exit(1);
-        }
-        String outputBucket = outputs.get(0).getAsJsonObject().getAsJsonPrimitive("source").getAsString();
-
         config = config.getAsJsonObject("parameters");
 
         if (config.getAsJsonPrimitive("method") == null) {
@@ -94,7 +87,7 @@ public class KeboolaRFMSegmentation {
         Columns columnsHeaders = new Columns(isClustered ? cluster : "", entity, price, date);
 
         IRFMDataProvider dataProvider = new CsvRFMDataProvider("/data/in/tables/"+inputTable, separator, columnsHeaders, dateFormat, true);
-        IRFMDataExporter dataExporter = new CsvRFMDataExporter("/data/out/tables/"+outputBucket, separator, isClustered, dateFormat);
+        IRFMDataExporter dataExporter = new CsvRFMDataExporter("/data/out/tables/results.csv", separator, isClustered, dateFormat);
 
         if (method.equals("quantil") || method.equals("gradualQuantil")) {
             if (config.getAsJsonPrimitive("recencySegmentsCount") == null) {
@@ -172,11 +165,7 @@ public class KeboolaRFMSegmentation {
 
         if (config.getAsJsonPrimitive("potential") != null)
             if (config.getAsJsonPrimitive("potential").getAsString().equals("Yes")) {
-            if (outputs.get(1).getAsJsonObject().getAsJsonPrimitive("source") == null) {
-                System.err.println("Output file for business potential must be specified");
-                System.exit(1);
-            }
-            interpreters.add(new FMShiftInterpreter(new FileCustomDataExporter("/data/out/tables/"+outputs.get(1).getAsJsonObject().getAsJsonPrimitive("source").getAsString())));
+            interpreters.add(new FMShiftInterpreter(new FileCustomDataExporter("/data/out/tables/business_potential.csv")));
         }
 
         System.out.println("Parameters parsed successfully.");
